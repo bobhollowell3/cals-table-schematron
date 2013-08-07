@@ -1,0 +1,34 @@
+The naming scheme we started with was derived from the "full CALS" spec, or OASIS 9502:1995 CALS Table Model DTD:
+  https://www.oasis-open.org/specs/tm9502.html
+
+In the HTML document there are tables and most of the semantic rules lie within them.  
+  Tnn  specifies the table number 
+  Rn  specifies the row
+  and then we've numbered the constraints individually A, B, C etc.
+
+Most of the rules in 'full CALS' are also used in the 'exchange subset', or OASIS 9901:1999 XML Exchange Table Model DTD:
+  https://www.oasis-open.org/specs/tm9901.html
+
+This specification doesn't use the numbered tables, but does have numbered sections which can be refered to.
+Here is a mapping of the constraints between the two specs.  The table (yes we could use CALS :-) has a phase
+column which corresponds to the 4 ordered schematron phases used.
+
+Finally in the full spec, the fact that the tgroup/@cols is > 0, is constrained through the DTD number type, while
+in exchange it is a semantic constraint.
+
+Full CALS      Exchange                       Phase     Some text....
+T2R1A          3.2.1 Sentence 5, clause A     3                   
+T2R1B          3.2.1 Sentence 5, clause B     3         in ascending order left-to-right, 
+T2R1C          3.2.1 Sentence 5, clause C     3         in the range 1 to the number of colspecs,
+T2R1D          3.2.1 Sentence 5, clause D     3         which is not to exceed the value of the cols attribute of tgroup.
+-              3.2.2.1 Sentence 2             1         The value of this attribute (@cols) must be an integer greater than zero.
+T5R1           N/A                            1         References to spanname in such <entry>s are not supported;
+T6R1           N/A                            1         References to spanname in such <entry>s are not supported;
+T10R4A         3.7.1 list2 bullet1            2         any column referenced by name (either colname, namest or nameend) is not a colname of a colspec in that tgroup;
+T10R4B         3.7.1 list2 bullet2            1         any of those names are multiply defined in different colspecs of that tgroup;
+T10R4C         3.7.1 list2 bullet3            4         any portions of different entrys overlap each other;
+T10R4D         3.7.1 list2 bullet4            4         morerows vertical straddling extends beyond the rows appropriate to that thead or tbody;
+T10R4E         3.7.1 list2 bullet5            4         too many entrys occur in any row, exceeding the cols on the tgroup;
+T10R4F         3.7.1 list2 bullet6            3         any colnames used in namest and nameend to define a span in an entry refers to the namest column that is not to the left of the nameend column;
+T10R4G         3.7.1 list2 bullet7            4         an entry specifies a start column via entry's namest or colname that is to the left of the column where the entry would be placed by default.
+-              
