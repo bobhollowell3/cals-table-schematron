@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" type="xml"?>
+<!-- Copyright 2011, 2013 DeltaXML Ltd.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.  -->
+<article xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <title>Test for CALS T10R3C</title>
+    <table>
+      <title>Valid table</title>
+      <tgroup cols='3'>
+        <colspec colname='a'/>
+        <colspec colname='b'/>
+        <colspec colname='c'/>
+        <spanspec spanname="ab" namest="a" nameend="b"/>
+        <tbody>
+          <row><entry namest='a'/><entry namest='b' nameend='c'/></row>
+          <row><entry spanname='ab' morerows='1'/><entry colname='c'/></row>
+          <row><entry namest='c' /></row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <title>invalid table</title>
+      <!-- row[1]/entry[1], row[1]/entry[2], row[1]/entry[1] and row[3]/entry[1] should have schematron errors -->
+      <!-- Its very difficult (or impossible) to construct tests which fail the single line T10R4C constraint without
+        also failing T10R4G -->
+      <tgroup cols='3'>
+        <colspec colname='a'/>
+        <colspec colname='b'/>
+        <colspec colname='c'/>
+        <spanspec spanname="ab" namest="a" nameend="b"/>
+        <tbody>
+          <row><entry namest='a' nameend='c'/><entry namest='b' nameend='c'/><entry colname='c'/></row>
+          <row><entry colname='a'/><entry namest='b' nameend='c' morerows='1'/></row>
+          <row><entry spanname='ab'/></row>
+        </tbody>
+      </tgroup>
+    </table>
+</article>

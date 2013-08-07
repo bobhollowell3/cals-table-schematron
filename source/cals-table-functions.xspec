@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:/usr/local/java/xspec-v0.1/xspec.rnc" type="compact"?>
+<!-- Copyright 2011, 2013 DeltaXML Ltd.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.  -->
+
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec" 
+  xmlns:deltaxml="http://www.deltaxml.com/ns/well-formed-delta-v1"
+  xmlns:cals="http://www.deltaxml.com/ns/cals-table"
+  xmlns:dxa="http://www.deltaxml.com/ns/non-namespaced-attribute"
+  version="22"
+  stylesheet="cals-table-functions.xsl">
+  
+  <x:param name="t1">
+    <tgroup cols='1'>
+      <colspec colname="col1"/>
+      <tbody>
+        <row>
+          <entry colname="col1"/>
+        </row>
+      </tbody>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when a looking up a valid reference">
+    <x:call function="cals:lookup">
+      <x:param select="$t1//entry"/>
+      <x:param select="$t1//entry/@colname"/>
+    </x:call>
+    <x:expect label="the colspec is returned" select="$t1//colspec"/>
+    <x:expect label="a single result element is returned" test="count($x:result) eq 1"/>
+  </x:scenario>
+  
+  <x:param name="t2">
+    <tgroup cols='2'>
+      <colspec colname="col1"/>
+      <spanspec spanname="col1"/>
+      <tbody>
+        <row>
+          <entry colname="col1"/>
+          <entry spanname="col1"/>
+        </row>
+      </tbody>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when a looking up a valid (duplicated) colname reference">
+    <x:call function="cals:lookup">
+      <x:param select="$t2//entry[1]"/>
+      <x:param select="$t2//entry[1]/@colname"/>
+    </x:call>
+    <x:expect label="the colspec is returned" select="$t2//colspec"/>
+    <x:expect label="a single result element is returned" test="count($x:result) eq 1"/>
+  </x:scenario>
+  <x:scenario label="when a looking up a valid (duplicated) spanname reference">
+    <x:call function="cals:lookup">
+      <x:param select="$t2//entry[2]"/>
+      <x:param select="$t2//entry[2]/@spanname"/>
+    </x:call>
+    <x:expect label="the spanspec is returned" select="$t2//spanspec"/>
+    <x:expect label="a single result element is returned" test="count($x:result) eq 1"/>
+  </x:scenario>
+  
+  <x:param name="t3">
+    <tgroup cols='2'>
+      <colspec colname="col1"/>
+      <thead>
+        <row>
+          <entry colname="col1"/>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry colname="col1"/>
+        </row>
+      </tbody>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when a looking up a heading colname reference without heading colspecs">
+    <x:call function="cals:lookup">
+      <x:param select="$t3//thead//entry"/>
+      <x:param select="$t3//thead//entry/@colname"/>
+    </x:call>
+    <x:expect label="the top-level colspec is returned" select="$t3//colspec"/>
+    <x:expect label="a single result element is returned" test="count($x:result) eq 1"/>
+  </x:scenario>
+  
+  <x:param name="t4">
+    <tgroup cols='2'>
+      <colspec colname="col1"/>
+      <thead>
+        <colspec colname="col1"/>
+        <row>
+          <entry colname="col1"/>
+        </row>
+      </thead>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when a looking up a heading colname reference with heading colspecs">
+    <x:call function="cals:lookup">
+      <x:param select="$t4/thead//entry"/>
+      <x:param select="$t4/thead//entry/@colname"/>
+    </x:call>
+    <x:expect label="the heading colspec is returned" select="$t4//thead/colspec"/>
+    <x:expect label="a single result element is returned" test="count($x:result) eq 1"/>
+  </x:scenario>
+  
+  <x:param name="t5">
+    <tgroup cols='2'>
+      <colspec colname="col1"/>
+      <thead>
+        <colspec colname="col2"/>
+        <row>
+          <entry colname="col1"/>
+        </row>
+      </thead>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when a looking up a heading colname reference with masking heading colspecs ">
+    <x:call function="cals:lookup">
+      <x:param select="$t5/thead//entry[1]"/>
+      <x:param select="$t5/thead//entry[1]/@colname"/>
+    </x:call>
+    <x:expect label="no colspec is returned" select="()"/>
+    <x:expect label="no result element is returned" test="count($x:result) eq 0"/>
+  </x:scenario>
+  
+  <x:param name="cols1">
+    <tgroup cols='3'>
+      <colspec colname='i'/>
+      <colspec colname='j'/>
+      <colspec colname='k'/>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when the first colspec isnt numbered">
+    <x:call function="cals:colnum">
+      <x:param select="$cols1/colspec[1]"/>
+    </x:call>
+    <x:expect label="it is column 1" select="1"/>
+  </x:scenario>
+  <x:scenario label="when the colspecs arent numbered">
+    <x:call function="cals:colnum">
+      <x:param select="$cols1/colspec[2]"/>
+    </x:call>
+    <x:expect label="the second colspec is numbered 2" select="2"/>
+  </x:scenario>
+  <x:scenario label="when the colspecs arent numbered">
+    <x:call function="cals:colnum">
+      <x:param select="$cols1/colspec[3]"/>
+    </x:call>
+    <x:expect label="the third colspec is numbered 3" select="3"/>
+  </x:scenario>
+  
+  <x:param name="cols2">
+    <tgroup cols='7'>
+      <colspec colnum='4' colname='i'/>
+      <colspec colnum='6' colname='j'/>
+      <colspec colname='k'/>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when the a colspec is numbered">
+    <x:call function="cals:colnum">
+      <x:param select="$cols2/colspec[1]"/>
+    </x:call>
+    <x:expect label="thats its col number" select="4"/>
+  </x:scenario>
+  <x:scenario label="when some of colspecs are numbered">
+    <x:call function="cals:colnum">
+      <x:param select="$cols2/colspec[3]"/>
+    </x:call>
+    <x:expect label="numbering is restarted from previous numbers" select="$cols2/colspec[2]/@colnum + 1"/>
+  </x:scenario>
+  
+  <x:param name="overlap">
+    <tgroup cols='3'>
+      <row> <entry/> <entry/> <entry/> </row>
+      <row> <entry/> <entry/> <entry/> </row>
+    </tgroup>
+  </x:param>
+  <x:scenario label="when the previous rows are simple">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap/row[2]"/>
+    </x:call>
+    <x:expect label="the overlap set is empty" select="()"/>
+  </x:scenario>
+
+  
+  <x:param name="overlap2">
+    <tgroup cols='3'>
+      <row> <entry/> <entry morerows='2'/> <entry/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> <entry/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> <entry/> </row>
+      <row> <entry/> <entry/> </row>
+    </tgroup>
+  </x:param>
+  <x:scenario label="the row distance for the same row">
+    <x:call function="cals:row-distance2">
+      <x:param select="$overlap2/row[1]"/>
+      <x:param select="$overlap2/row[1]"/>
+    </x:call>
+    <x:expect label="is zero" select="0"/>
+  </x:scenario>
+  <x:scenario label="the row distance for the adjacent rows">
+    <x:call function="cals:row-distance2">
+      <x:param select="$overlap2/row[1]"/>
+      <x:param select="$overlap2/row[2]"/>
+    </x:call>
+    <x:expect label="is one" select="1"/>
+  </x:scenario>
+  <x:scenario label="the row distance for swapped adjacent rows">
+    <x:call function="cals:row-distance2">
+      <x:param select="$overlap2/row[2]"/>
+      <x:param select="$overlap2/row[1]"/>
+    </x:call>
+    <x:expect label="is one" select="1"/>
+  </x:scenario>
+  <x:scenario label="the row distance for the end rows">
+    <x:call function="cals:row-distance2">
+      <x:param select="$overlap2/row[1]"/>
+      <x:param select="$overlap2/row[4]"/>
+    </x:call>
+    <x:expect label="is 3" select="3"/>
+  </x:scenario>
+  <x:scenario label="when the previous rows middle entry overlaps">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap2/row[2]"/>
+    </x:call>
+    <x:expect label="the overlap set contains 2" select="(2)"/>
+  </x:scenario>
+  <x:scenario label="when a further rows middle entry overlaps">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap2/row[3]"/>
+    </x:call>
+    <x:expect label="the overlap set contains 2" select="(2)"/>
+  </x:scenario>
+  <x:scenario label="when a distant rows middle entry no longer overlaps">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap2/row[4]"/>
+    </x:call>
+    <x:expect label="the overlap set is empty" select="()"/>
+  </x:scenario>
+  
+  <x:param name="overlap3">
+    <tgroup cols='3'>
+      <row> <entry/> <entry morerows='4'/> <entry/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> <entry/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> <entry morerows='1'/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry morerows='1'/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> </row>
+    </tgroup>
+  </x:param>
+  <x:scenario label="with a table with lots of overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap3/row[1]"/>
+    </x:call>
+    <x:expect label="the first row has no overlap" select="()"/>
+  </x:scenario>
+  <x:scenario label="with a table with lots of overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap3/row[2]"/>
+    </x:call>
+    <x:expect label="the second row has (2) overlap" select="2"/>
+  </x:scenario>
+  <x:scenario label="with a table with lots of overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap3/row[3]"/>
+    </x:call>
+    <x:expect label="the 3rd row has (2) overlap" select="2"/>
+  </x:scenario>
+  <x:scenario label="with a table with lots of overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap3/row[4]"/>
+    </x:call>
+    <x:expect label="the 4th row has (2,3) overlap" select="(2,3)"/>
+  </x:scenario>
+  <x:scenario label="with a table with lots of overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap3/row[5]"/>
+    </x:call>
+    <x:expect label="the 5th row has (1, 2) overlap" select="(2,1)"/>
+  </x:scenario>
+  <x:scenario label="row[1]/entry[1]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[1]/entry[1]"/> </x:call>
+    <x:expect label="is colnum 1" select="1"/>
+  </x:scenario>
+  <x:scenario label="row[1]/entry[2]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[1]/entry[2]"/> </x:call>
+    <x:expect label="is colnum 2" select="2"/>
+  </x:scenario>
+  <x:scenario label="row[1]/entry[3]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[1]/entry[3]"/> </x:call>
+    <x:expect label="is colnum 3" select="3"/>
+  </x:scenario>
+  <x:scenario label="row[2]/entry[1]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[2]/entry[1]"/> </x:call>
+    <x:expect label="is colnum 1" select="1"/>
+  </x:scenario>
+  <x:scenario label="row[2]/entry[2]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[2]/entry[2]"/> </x:call>
+    <x:expect label="is colnum 3" select="3"/>
+  </x:scenario>
+  <x:scenario label="row[4]/entry[1]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[4]/entry[1]"/> </x:call>
+    <x:expect label="is colnum 1" select="1"/>
+  </x:scenario>
+  <x:scenario label="row[5]/entry[1]">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap3/row[5]/entry[1]"/> </x:call>
+    <x:expect label="is colnum 3" select="3"/>
+  </x:scenario>
+  
+  <x:param name="overlap4">
+    <tgroup cols='4'>
+      <colspec colname='a'/> <colspec colname='b'/> <colspec colname='c'/> <colspec colname='d'/>
+      <row> <entry/> <entry namest='b' nameend='c' morerows='2'/> <entry/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> <entry/> </row>
+      <row cals:overlapped-a="true" cals:overlapped-b="true"> <entry/> <entry/> </row>
+      <row> <entry/> <entry/> <entry/> <entry/> </row>
+    </tgroup>
+  </x:param>
+  <x:scenario label="with a table with wide overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap4/row[1]"/>
+    </x:call>
+    <x:expect label="the first row has no overlap" select="()"/>
+  </x:scenario>
+  <x:scenario label="with a table with wide overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap4/row[2]"/>
+    </x:call>
+    <x:expect label="the second row has (2,3) overlap" select="(2,3)"/>
+  </x:scenario>
+  <x:scenario label="with a table with wide overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap4/row[3]"/>
+    </x:call>
+    <x:expect label="the 3rd row has (2, 3) overlap" select="(2,3)"/>
+  </x:scenario>
+  <x:scenario label="with a table with wide overlap">
+    <x:call function="cals:overlap2">
+      <x:param select="$overlap4/row[4]"/>
+    </x:call>
+    <x:expect label="the 4th row has () overlap" select="()"/>
+  </x:scenario>
+  <x:scenario label="row 1, col 1">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap4/row[1]/entry[1]"/> </x:call>
+    <x:expect label="is colnum 1" select="1"/>
+  </x:scenario>
+  <x:scenario label="row 1, col 2">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap4/row[1]/entry[2]"/> </x:call>
+    <x:expect label="is colnum 2 and 3" select="(2,3)"/>
+  </x:scenario>
+  <x:scenario label="row 1, col 3">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap4/row[1]/entry[3]"/> </x:call>
+    <x:expect label="is colnum 4" select="4"/>
+  </x:scenario>
+  <x:scenario label="row 2, col 1">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap4/row[2]/entry[1]"/> </x:call>
+    <x:expect label="is colnum 1" select="1"/>
+  </x:scenario>
+  <x:scenario label="row 2, entry 2">
+    <x:call function="cals:entry-to-columns"> <x:param select="$overlap4/row[2]/entry[2]"/> </x:call>
+    <x:expect label="is colnum 4" select="4"/>
+  </x:scenario>
+  
+</x:description>
