@@ -1,0 +1,19 @@
+To validate in oXygen we would suggest modifying your Docbook or DITA framework as follows:
+
+Go to the Preferences->Document Type Association panel.  Select the DTA you want to update (I typically use cals.sch with DocBook5 and DITA (topics)).
+
+Click the validation tab and then the '+' at the bottom of the window.
+
+Then add a new validation scenario, with the following columns:
+
+URL of the file to validate:    ${currentFileURL}
+File Type:                      XML Document
+Validation Engine:              <Default Engine>
+Automatic Validation:           ticked
+
+Open the next dialog to browse to your location for cals.sch by clicking the button in the final column.
+
+In the 'Specify Schema' dialog:  use custom schema,   browse to your cals.sch location,
+For schematron phase I would recommend #ALL or structure.
+
+Carefully click OK through about 4 levels of preferences windows.
