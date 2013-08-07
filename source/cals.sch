@@ -131,7 +131,7 @@
                     else true()">Entry (<xsl:value-of
         select="saxon:path()"/>) specifies a start column (column <xsl:value-of
         select="min(cals:entry-to-columns(.))"/>) which is to the left (or less than in numeric terms) of the position it would be placed by default (column <xsl:value-of
-        select="cals:get-default-col-pos(.)"/>)</assert>
+        select="cals:get-default-col-pos(.)"/>) CALS-T10R4G</assert>
     
     </rule>
 
