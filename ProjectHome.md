@@ -1,0 +1,3 @@
+CALS tables are used in various documentation systems/standards (such as Docbook and DITA).  They are currently defined as OASIS standards and these standard specs include semantic rules described in natural language as part of the specs (full CALS and exchange subset).
+
+This code uses schematron to automate the checking of the semantic rules/constraints. There may be other uses beyond semantic checking when doing more general table processing.
